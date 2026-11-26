@@ -1,0 +1,766 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人桌面助手</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#181825">
+    <!-- 載入多款繁體中文雲端字體 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@400;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lxgw-wenkai-tc-webfont@1.0.0/style.css">
+    <style>
+        /* 1. 極簡深色 (預設) */
+        :root {
+            --bg-color: #1e1e2e;
+            --header-bg: #181825;
+            --card-bg: #2a2a3c;
+            --panel-bg: #232334;
+            --border-color: #313244;
+            --text-main: #cdd6f4;
+            --text-muted: #a6adc8;
+            --accent-blue: #89b4fa;
+            --accent-green: #a6e3a1;
+            --accent-yellow: #f9e2af;
+            --accent-purple: #cba6f7;
+            --font-family: "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+            --base-font-size: 14px;
+            --card-padding: 10px 12px;
+            --card-gap: 8px;
+        }
+
+        /* 2. 純淨亮白 */
+        [data-theme="light"] {
+            --bg-color: #f4f6f9;
+            --header-bg: #ffffff;
+            --card-bg: #ffffff;
+            --panel-bg: #eef1f6;
+            --border-color: #dce1e8;
+            --text-main: #2c3e50;
+            --text-muted: #7f8c8d;
+            --accent-blue: #2980b9;
+            --accent-green: #27ae60;
+            --accent-yellow: #d35400;
+            --accent-purple: #8e44ad;
+        }
+
+        /* 3. 賽博龐克 */
+        [data-theme="cyber"] {
+            --bg-color: #0d0e15;
+            --header-bg: #07080c;
+            --card-bg: #161824;
+            --panel-bg: #12141f;
+            --border-color: #2a2e45;
+            --text-main: #e0fbfc;
+            --text-muted: #8d99ae;
+            --accent-blue: #00f5d4;
+            --accent-green: #fee440;
+            --accent-yellow: #f15bb5;
+            --accent-purple: #9b5de5;
+        }
+
+        /* 4. 森林護眼 */
+        [data-theme="forest"] {
+            --bg-color: #1b2620;
+            --header-bg: #141d18;
+            --card-bg: #24332b;
+            --panel-bg: #1f2c25;
+            --border-color: #31443a;
+            --text-main: #e8ecea;
+            --text-muted: #9eb0a6;
+            --accent-blue: #81b29a;
+            --accent-green: #f2cc8f;
+            --accent-yellow: #e07a5f;
+            --accent-purple: #b8c0ff;
+        }
+
+        /* 5. 粉紅滋味 (粉紅色系) */
+        [data-theme="pink"] {
+            --bg-color: #fff0f5;
+            --header-bg: #ffe3ec;
+            --card-bg: #ffffff;
+            --panel-bg: #ffd6e4;
+            --border-color: #f8bbd0;
+            --text-main: #59253a;
+            --text-muted: #9e5a74;
+            --accent-blue: #e91e63;
+            --accent-green: #ec407a;
+            --accent-yellow: #d81b60;
+            --accent-purple: #ad1457;
+        }
+
+        /* 6. 黃昏夕陽 (橘色系) */
+        [data-theme="sunset"] {
+            --bg-color: #2b1914;
+            --header-bg: #1f110d;
+            --card-bg: #3b231c;
+            --panel-bg: #331d17;
+            --border-color: #543329;
+            --text-main: #ffedd8;
+            --text-muted: #d4a38d;
+            --accent-blue: #ff8c42;
+            --accent-green: #ffd166;
+            --accent-yellow: #ff595e;
+            --accent-purple: #f4a261;
+        }
+
+        /* 7. 幽蘭山谷 (靛青色系) */
+        [data-theme="indigo"] {
+            --bg-color: #13192b;
+            --header-bg: #0c101d;
+            --card-bg: #1c2541;
+            --panel-bg: #171f36;
+            --border-color: #2c3a63;
+            --text-main: #e2eafc;
+            --text-muted: #8ea4d2;
+            --accent-blue: #5bc0be;
+            --accent-green: #6fffe9;
+            --accent-yellow: #9d4edd;
+            --accent-purple: #7b2cbf;
+        }
+
+        /* 8. 清爽大海 (藍白色系) */
+        [data-theme="ocean"] {
+            --bg-color: #ebf6fc;
+            --header-bg: #d6eefb;
+            --card-bg: #ffffff;
+            --panel-bg: #e0f2fe;
+            --border-color: #bae6fd;
+            --text-main: #0c4a6e;
+            --text-muted: #4b7b99;
+            --accent-blue: #0284c7;
+            --accent-green: #0d9488;
+            --accent-yellow: #0369a1;
+            --accent-purple: #2563eb;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-size: var(--base-font-size);
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: background-color 0.25s, color 0.25s;
+        }
+
+        /* 自訂頂部標題與拖曳區 */
+        .titlebar {
+            position: fixed;
+            top: 0;
+            left: env(titlebar-area-x, 0);
+            width: env(titlebar-area-width, 100%);
+            height: env(titlebar-area-height, 36px);
+            background-color: var(--header-bg);
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 8px;
+            padding: 0 10px;
+            -webkit-app-region: drag;
+            user-select: none;
+            border-bottom: 1px solid var(--border-color);
+            z-index: 100;
+        }
+
+        .titlebar-title {
+            font-size: 13px;
+            font-weight: bold;
+            color: var(--accent-blue);
+            white-space: nowrap;
+            margin-right: auto;
+        }
+
+        .titlebar-actions {
+            -webkit-app-region: no-drag;
+            display: flex;
+            gap: 4px;
+        }
+
+        .action-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            border-radius: 4px;
+            padding: 2px 7px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            background: var(--card-bg);
+            border-color: var(--accent-blue);
+        }
+
+        /* 主內容區 */
+        .container {
+            margin-top: calc(env(titlebar-area-height, 36px) + 12px);
+            padding: 0 14px 24px 14px;
+        }
+
+        /* 頂部顯眼即時時鐘區塊 */
+        .clock-widget {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .clock-date {
+            font-size: calc(var(--base-font-size) - 1px);
+            color: var(--text-muted);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+
+        .clock-time {
+            font-size: calc(var(--base-font-size) + 12px);
+            font-weight: 700;
+            color: var(--accent-blue);
+            letter-spacing: 1px;
+            margin-top: 2px;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* 外觀自定義設定面板 */
+        .settings-panel {
+            display: none;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 14px;
+            font-size: 12px;
+        }
+
+        .settings-panel.open {
+            display: block;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .setting-group-title {
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin: 8px 0 6px 0;
+            padding-bottom: 3px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-group-title:first-child {
+            margin-top: 0;
+        }
+
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .setting-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .setting-row select {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            padding: 3px 6px;
+            font-size: 12px;
+            font-family: inherit;
+            outline: none;
+            max-width: 145px;
+        }
+
+        .status-bar {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .section-title {
+            font-size: calc(var(--base-font-size) - 1px);
+            font-weight: bold;
+            color: var(--accent-yellow);
+            margin: 16px 0 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title.next-week {
+            color: var(--accent-blue);
+        }
+
+        .section-title.next-month {
+            color: var(--accent-purple);
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: var(--card-padding);
+            margin-bottom: var(--card-gap);
+            border-left: 3px solid var(--accent-blue);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+        }
+
+        .card.task {
+            border-left-color: var(--accent-green);
+        }
+
+        .card.next-month {
+            border-left-color: var(--accent-purple);
+        }
+
+        .card-time {
+            font-size: calc(var(--base-font-size) - 2px);
+            color: var(--accent-blue);
+            font-weight: bold;
+        }
+
+        .card.next-month .card-time {
+            color: var(--accent-purple);
+        }
+
+        .card-title {
+            font-size: var(--base-font-size);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .card-note {
+            font-size: calc(var(--base-font-size) - 2px);
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .empty-msg {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-align: center;
+            padding: 14px 10px;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border: 1px dashed var(--border-color);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 自訂頂部標題列 -->
+    <header class="titlebar">
+        <div class="titlebar-title">📌 工作助手</div>
+        <div class="titlebar-actions">
+            <button class="action-btn" onclick="toggleSettings()" title="自定義外觀與時鐘">🎨</button>
+            <button class="action-btn" onclick="resetToken()" title="重設驗證密碼">🔑</button>
+            <button class="action-btn" id="refreshBtn" onclick="fetchSchedule(true)" title="立即更新">↻</button>
+        </div>
+    </header>
+
+    <!-- 主要顯示內容 -->
+    <main class="container">
+        <!-- 頂部顯眼日期與時間區塊 -->
+        <section class="clock-widget" id="clockWidget">
+            <div class="clock-date" id="clockDate">載入日期中...</div>
+            <div class="clock-time" id="clockTime">--:--:--</div>
+        </section>
+
+        <!-- 外觀與時鐘設定摺疊面板 -->
+        <section class="settings-panel" id="settingsPanel">
+            <div class="setting-group-title">⏰ 時鐘格式設定</div>
+            <div class="setting-row">
+                <span>時間制式</span>
+                <select id="clockFormatSelect" onchange="updateAppearance()">
+                    <option value="24h">24 小時制 (14:30)</option>
+                    <option value="12h">12 小時制 (下午 02:30)</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span>顯示秒數</span>
+                <select id="clockSecondsSelect" onchange="updateAppearance()">
+                    <option value="show">顯示秒數</option>
+                    <option value="hide">隱藏秒數</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span>年份顯示</span>
+                <select id="clockYearSelect" onchange="updateAppearance()">
+                    <option value="ad">西元年 (2026年)</option>
+                    <option value="roc">民國年 (115年)</option>
+                </select>
+            </div>
+
+            <div class="setting-group-title">🎨 外觀與字體設定</div>
+            <div class="setting-row">
+                <span>配色主題</span>
+                <select id="themeSelect" onchange="updateAppearance()">
+                    <option value="dark">極簡深色 (預設)</option>
+                    <option value="light">純淨亮白</option>
+                    <option value="pink">🌸 粉紅滋味</option>
+                    <option value="sunset">🌅 黃昏夕陽</option>
+                    <option value="indigo">🪻 幽蘭山谷</option>
+                    <option value="ocean">🌊 清爽大海</option>
+                    <option value="cyber">賽博龐克</option>
+                    <option value="forest">森林護眼</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span>顯示字體</span>
+                <select id="fontSelect" onchange="updateAppearance()">
+                    <option value="msjh">微軟正黑體</option>
+                    <option value="wenkai">霞鶩文楷 (手寫質感)</option>
+                    <option value="notosans">思源黑體 (現代俐落)</option>
+                    <option value="notoserif">思源宋體 (典雅書卷)</option>
+                    <option value="round">圓潤黑體 (柔和可愛)</option>
+                    <option value="mono">等寬科技字體</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span>文字大小</span>
+                <select id="sizeSelect" onchange="updateAppearance()">
+                    <option value="12px">精巧 (12px)</option>
+                    <option value="14px" selected>標準 (14px)</option>
+                    <option value="16px">舒適 (16px)</option>
+                </select>
+            </div>
+            <div class="setting-row">
+                <span>卡片密度</span>
+                <select id="densitySelect" onchange="updateAppearance()">
+                    <option value="normal">標準間距</option>
+                    <option value="compact">緊湊小方塊</option>
+                </select>
+            </div>
+        </section>
+
+        <div class="status-bar">
+            <span id="statusText">正在連線取得資料...</span>
+            <span id="notifyStatus"></span>
+        </div>
+
+        <div id="contentArea"></div>
+    </main>
+
+    <script>
+        // =========================================================================
+        // 【請修改這裡】填入你部署 Google Apps Script 產生的 /exec 網址（不含 ?token=）
+        // =========================================================================
+        const BASE_GAS_URL = "https://script.google.com/macros/s/AKfycbwiBqKKLFztgwarC0VmxzsRVvWngk-lzqxvV2uzJCC0i70gAzVeN6Ywg9g-ksk3Jb43Ew/exec";
+
+
+        // 註冊 Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').catch(err => console.error('SW 註冊失敗:', err));
+        }
+
+        // --- 即時時鐘邏輯 ---
+        let currentSettings = {
+            theme: 'dark',
+            font: 'msjh',
+            size: '14px',
+            density: 'normal',
+            clockFormat: '24h',
+            clockSeconds: 'show',
+            clockYear: 'ad'
+        };
+
+        function updateClock() {
+            const now = new Date();
+            const weekDays = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+            const year = currentSettings.clockYear === 'roc'
+                ? `民國 ${now.getFullYear() - 1911} 年`
+                : `${now.getFullYear()} 年`;
+            const month = now.getMonth() + 1;
+            const date = now.getDate();
+            const dayName = weekDays[now.getDay()];
+
+            document.getElementById('clockDate').textContent = `${year} ${month} 月 ${date} 日・${dayName}`;
+
+            let hours = now.getHours();
+            let period = '';
+            if (currentSettings.clockFormat === '12h') {
+                period = hours >= 12 ? '下午 ' : '上午 ';
+                hours = hours % 12 || 12;
+            }
+            const hh = String(hours).padStart(2, '0');
+            const mm = String(now.getMinutes()).padStart(2, '0');
+            const ss = String(now.getSeconds()).padStart(2, '0');
+
+            const timeStr = currentSettings.clockSeconds === 'show'
+                ? `${period}${hh}:${mm}:${ss}`
+                : `${period}${hh}:${mm}`;
+
+            document.getElementById('clockTime').textContent = timeStr;
+        }
+
+        // --- 外觀與時鐘設定控制邏輯 ---
+        function toggleSettings() {
+            document.getElementById('settingsPanel').classList.toggle('open');
+        }
+
+        function updateAppearance() {
+            currentSettings = {
+                theme: document.getElementById('themeSelect').value,
+                font: document.getElementById('fontSelect').value,
+                size: document.getElementById('sizeSelect').value,
+                density: document.getElementById('densitySelect').value,
+                clockFormat: document.getElementById('clockFormatSelect').value,
+                clockSeconds: document.getElementById('clockSecondsSelect').value,
+                clockYear: document.getElementById('clockYearSelect').value
+            };
+            localStorage.setItem('assistant_appearance', JSON.stringify(currentSettings));
+            applyAppearance(currentSettings);
+            updateClock();
+        }
+
+        function applyAppearance(config) {
+            const root = document.documentElement;
+
+            // 1. 配色主題
+            if (config.theme === 'dark') {
+                root.removeAttribute('data-theme');
+            } else {
+                root.setAttribute('data-theme', config.theme);
+            }
+
+            // 2. 字體對應表
+            const fontMap = {
+                msjh: '"Microsoft JhengHei", "Noto Sans TC", sans-serif',
+                wenkai: '"LXGW WenKai TC", "Microsoft JhengHei", serif',
+                notosans: '"Noto Sans TC", "Microsoft JhengHei", sans-serif',
+                notoserif: '"Noto Serif TC", "PMingLiU", serif',
+                round: '"Quicksand", "jf-openhuninn", "Microsoft JhengHei Rounded", "Microsoft JhengHei", sans-serif',
+                mono: '"Consolas", "Courier New", "Microsoft JhengHei", monospace'
+            };
+            root.style.setProperty('--font-family', fontMap[config.font] || fontMap.msjh);
+
+            // 3. 字級
+            root.style.setProperty('--base-font-size', config.size);
+
+            // 4. 卡片密度
+            if (config.density === 'compact') {
+                root.style.setProperty('--card-padding', '6px 10px');
+                root.style.setProperty('--card-gap', '5px');
+            } else {
+                root.style.setProperty('--card-padding', '10px 12px');
+                root.style.setProperty('--card-gap', '8px');
+            }
+        }
+
+        function loadSavedAppearance() {
+            const saved = localStorage.getItem('assistant_appearance');
+            if (saved) {
+                currentSettings = { ...currentSettings, ...JSON.parse(saved) };
+                document.getElementById('themeSelect').value = currentSettings.theme;
+                document.getElementById('fontSelect').value = currentSettings.font;
+                document.getElementById('sizeSelect').value = currentSettings.size;
+                document.getElementById('densitySelect').value = currentSettings.density;
+                document.getElementById('clockFormatSelect').value = currentSettings.clockFormat;
+                document.getElementById('clockSecondsSelect').value = currentSettings.clockSeconds;
+                document.getElementById('clockYearSelect').value = currentSettings.clockYear;
+                applyAppearance(currentSettings);
+            }
+        }
+
+        // --- 驗證與資料抓取邏輯 ---
+        function getSecretToken() {
+            let token = localStorage.getItem("assistant_secret_token");
+            if (!token) {
+                token = prompt("請輸入你的桌面助手專屬驗證密碼（僅需輸入一次）：");
+                if (token && token.trim() !== "") {
+                    localStorage.setItem("assistant_secret_token", token.trim());
+                }
+            }
+            return localStorage.getItem("assistant_secret_token");
+        }
+
+        function resetToken() {
+            const current = localStorage.getItem("assistant_secret_token") || "";
+            const newToken = prompt("請輸入新的驗證密碼：", current);
+            if (newToken !== null && newToken.trim() !== "") {
+                localStorage.setItem("assistant_secret_token", newToken.trim());
+                fetchSchedule(true);
+            }
+        }
+
+        function getFullApiUrl() {
+            const token = getSecretToken();
+            return `${BASE_GAS_URL}?token=${encodeURIComponent(token || "")}`;
+        }
+
+        function updateNotifyBadge() {
+            const badge = document.getElementById('notifyStatus');
+            if (!("Notification" in window)) return;
+            if (Notification.permission === "granted") {
+                badge.textContent = "🔔 通知已開啟";
+            } else {
+                badge.innerHTML = `<a href="#" style="color:var(--accent-yellow)" onclick="requestNotifyPermission()">點此開啟通知</a>`;
+            }
+        }
+
+        function requestNotifyPermission() {
+            Notification.requestPermission().then(() => updateNotifyBadge());
+        }
+
+        function sendDesktopNotification(data) {
+            if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+            const summary = `今日有 ${data.events.length} 個行程、${data.tasks.length} 項待辦事項`;
+            new Notification("📌 今日工作提醒", {
+                body: summary,
+                icon: "https://cdn-icons-png.flaticon.com/512/2693/2693507.png"
+            });
+        }
+
+        // 輔助渲染活動卡片
+        function buildEventCards(events, extraClass = '') {
+            return events.map(ev => {
+                const datePrefix = ev.dateLabel ? `${ev.dateLabel} ` : '';
+                const timeStr = ev.isAllDay ? `${datePrefix}全天行程` : `${datePrefix}${ev.startTime} - ${ev.endTime}`;
+                const locStr = ev.location ? `<div class="card-note">📍 ${ev.location}</div>` : '';
+                return `
+          <div class="card ${extraClass}">
+            <div class="card-time">${timeStr}</div>
+            <div class="card-title">${ev.title}</div>
+            ${locStr}
+          </div>`;
+            }).join('');
+        }
+
+        function renderDashboard(data) {
+            const contentArea = document.getElementById('contentArea');
+            document.getElementById('statusText').textContent = `資料同步：${data.updatedAt.split(' ')[1]}`;
+
+            let html = '';
+
+            // 區塊一：今日行程與待辦
+            html += `<div class="section-title">📅 今日行程 (${data.events.length})</div>`;
+            if (data.events.length > 0) {
+                html += buildEventCards(data.events);
+            } else {
+                html += `<div class="empty-msg">☕ 今日無排定日曆行程</div>`;
+            }
+
+            if (data.tasks && data.tasks.length > 0) {
+                html += `<div class="section-title">✅ 今日待辦 (${data.tasks.length})</div>`;
+                data.tasks.forEach(task => {
+                    const dueStr = task.due ? `<div class="card-time" style="color:var(--accent-green);">${task.due}</div>` : '';
+                    const noteStr = task.notes ? `<div class="card-note">${task.notes}</div>` : '';
+                    html += `
+            <div class="card task">
+              ${dueStr}
+              <div class="card-title">${task.title}</div>
+              ${noteStr}
+            </div>`;
+                });
+            }
+
+            // 區塊二：下週行程
+            const nextWeek = data.nextWeekEvents || [];
+            html += `<div class="section-title next-week">📆 下週行程 (${nextWeek.length})</div>`;
+            if (nextWeek.length > 0) {
+                html += buildEventCards(nextWeek);
+            } else {
+                html += `<div class="empty-msg">下週暫無排定行程</div>`;
+            }
+
+            // 區塊三：下個月行程
+            const nextMonth = data.nextMonthEvents || [];
+            html += `<div class="section-title next-month">🗓️ 下個月行程 (${nextMonth.length})</div>`;
+            if (nextMonth.length > 0) {
+                html += buildEventCards(nextMonth, 'next-month');
+            } else {
+                html += `<div class="empty-msg">下個月暫無排定行程</div>`;
+            }
+
+            contentArea.innerHTML = html;
+        }
+
+        async function fetchSchedule(isManual = false) {
+            const btn = document.getElementById('refreshBtn');
+            const apiUrl = getFullApiUrl();
+
+            if (!localStorage.getItem("assistant_secret_token")) {
+                document.getElementById('statusText').textContent = '尚未設定密碼，請點擊 🔑 輸入';
+                return;
+            }
+
+            btn.textContent = '...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch(apiUrl);
+                const data = await response.json();
+
+                if (data.error) {
+                    document.getElementById('statusText').textContent = `錯誤：${data.error}`;
+                    document.getElementById('contentArea').innerHTML = `<div class="empty-msg">🔒 驗證未通過，請點擊上方 🔑 按鈕輸入正確密碼。</div>`;
+                    return;
+                }
+
+                renderDashboard(data);
+
+                if (data.hasReminder) {
+                    sendDesktopNotification(data);
+                }
+            } catch (error) {
+                document.getElementById('statusText').textContent = '連線失敗，請檢查網路';
+                console.error(error);
+            } finally {
+                btn.textContent = '↻';
+                btn.disabled = false;
+            }
+        }
+
+        // 初始化執行
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSavedAppearance();
+            updateClock();
+            setInterval(updateClock, 1000); // 每秒更新頂部時鐘
+
+            updateNotifyBadge();
+            if ("Notification" in window && Notification.permission === "default") {
+                Notification.requestPermission().then(updateNotifyBadge);
+            }
+            fetchSchedule(false);
+        });
+
+        setInterval(() => fetchSchedule(false), 30 * 60 * 1000);
+    </script>
+</body>
+
+</html>
